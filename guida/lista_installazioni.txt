@@ -1,41 +1,54 @@
-set static ip
+assign a static ip to your raspberry
 
-#AGGIORNIAMO I PACCHETTI DELLA RASPBERRY
+#UPDATE PACKAGES
 sudo apt update
-#ISTALLIAMO IL CLIENT MQTT MOSQUITTO
+#INSTALL MQTT MOSQUITTO CLIENT
 sudo apt install -y mosquitto mosquitto-clients
-#ABILITIAMO IL SERVIZIO MQTT MOSQUITTO COSICCHE PARTA IN BACKGROUND AD OGNI AVVIO DELLA RASPPI
+#ENABLE MQTT MOSQUITTO SERVICE. IT WILL RUN IN BACKGROUND AT START-UP
 sudo systemctl enable mosquitto.service
+#ENABLE THE REMOTE ACCESS TO MQTT Mosquitto BROKER (WARNING -WITHOUT AUTHENTICATION)
 #ABILITIAMO L'ACCESSO DA REMOTO AL BROKER MQTT Mosquitto (ATTENZIONE -SENZA AUTENTICAZIONE)
+#OPEN THE FILE
 #APRIAMO IL FILE
 sudo nano /etc/mosquitto/mosquitto.conf
+#ADD AT THE END OF THE FILE:
 #aggiungere in fondo al file:
 listener 1883
 allow_anonymous true
 
+#RESTART THE MOSQUITTO SERVICE
 #FACCIAMO IL RESTART DEL SERVIZIO MOSQUITTO
 sudo systemctl restart mosquitto
+#TAKE A LOOK AT ITS STATUS. IT MUST BE ACTIVE (GREEN TEXT)
 #VEDIAMO IL SUO STATO. Deve essere Active di colore verde se tutto è andato a buon fine
 sudo systemctl status mosquitto
-
+#LET'S TEST
 #FACCIAMO UN TEST.
+#OPEN A TERMINAL AND SUBSCRIBE TO THE FOLLOWING TOPIC "testTopic"
 #IN UN TERMINALE SOTTOSCRIVIAMO AL TOPIC "testTopic"
 mosquitto_sub -d -t testTopic
+#OPEN ANOTHER TERMINAL AND PUBLISH "HELLO WORD" TO THE TOPIC "testTopic"
 #IN UN ALTRO TERMINALE PUBBLICHIAMO SUL TOPIC "testTopic" LA FRASE HELLO WORLD
 mosquitto_pub -d -t testTopic -m "Hello world!"
+#LOOK AT THE FORMER TERMINAL, YOU SHOULD READ "HELLO WORD"
+#THIS MEANS OUR BROKER IS WORKING FINE
 #SUL PRIMO TERMINALE DOVREMMO LEGGERE LA FRASE HELLO WORD.
 #QUESTO SIGNIFICA CHE IL NOSTRO BROKER MQTT MOSQUITTO STA FUNZIONANDO
 
-
+#INSTALL NODERED
 #INSTALLIAMO NODERED
 bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
-	
+
+#ENABLE THE NODERED SERVICE. IT WILL RUN IN BACKGROUND AT START-UP
 #ABILITIAMO IL SERVIZIO NODERED COSICCHE PARTA IN BACKGROUND AD OGNI AVVIO DELLA RASPPI
 sudo systemctl enable nodered.service
+#START THE NODERED SERVICE. YOU NEED TO DO SO ONLY ONCE. NOW YOU CAN CLOSE THE TERMINAL IF YOU WISH
 #Startiamo il servizio nodered. basta farlo una sola volta nella vita. Una volta avviato possiamo anche chiudere il terminale
 #il servizio ora sta girando in background
 node-red-start
 
+#TO CODE IN NODERED, OPEN A WEBBROWSER AND TYPE: http://192.168.178.44:1880
+#CHANGE THE IP ACCORDING TO THE IP OF YOUR SERVER
 #Per Programmare In Nodered aprimo dal nostro browser web questa pagina
 #dove IP è IP della macchina dove gira il server nodered
 http://192.168.178.44:1880
@@ -51,10 +64,13 @@ http://192.168.178.44:1880
 #con tutti i passaggi necessari per rendere il server sicuro da attacci informatici.
 http://192.168.178.44:1880/ui
 
-
+#INSTALL THE NODERED PACKAGES
 #installare i pacchetti nodered
+#GO TO Menu->Manage palette
 #In nodered andare in Menu->Manage palette
+#LEFT CLICK ON Install Tab
 #Cliccare nel tab Install
+#SEARCH FOR THE FOLLOWING PACKAGES:
 #e cercare i seguenti pacchetti e cliccare su install:
 node-red-dashboard
 node-red-contrib-ui-led
