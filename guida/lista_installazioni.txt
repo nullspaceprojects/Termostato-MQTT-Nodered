@@ -1,0 +1,60 @@
+set static ip
+
+#AGGIORNIAMO I PACCHETTI DELLA RASPBERRY
+sudo apt update
+#ISTALLIAMO IL CLIENT MQTT MOSQUITTO
+sudo apt install -y mosquitto mosquitto-clients
+#ABILITIAMO IL SERVIZIO MQTT MOSQUITTO COSICCHE PARTA IN BACKGROUND AD OGNI AVVIO DELLA RASPPI
+sudo systemctl enable mosquitto.service
+#ABILITIAMO L'ACCESSO DA REMOTO AL BROKER MQTT Mosquitto (ATTENZIONE -SENZA AUTENTICAZIONE)
+#APRIAMO IL FILE
+sudo nano /etc/mosquitto/mosquitto.conf
+#aggiungere in fondo al file:
+listener 1883
+allow_anonymous true
+
+#FACCIAMO IL RESTART DEL SERVIZIO MOSQUITTO
+sudo systemctl restart mosquitto
+#VEDIAMO IL SUO STATO. Deve essere Active di colore verde se tutto è andato a buon fine
+sudo systemctl status mosquitto
+
+#FACCIAMO UN TEST.
+#IN UN TERMINALE SOTTOSCRIVIAMO AL TOPIC "testTopic"
+mosquitto_sub -d -t testTopic
+#IN UN ALTRO TERMINALE PUBBLICHIAMO SUL TOPIC "testTopic" LA FRASE HELLO WORLD
+mosquitto_pub -d -t testTopic -m "Hello world!"
+#SUL PRIMO TERMINALE DOVREMMO LEGGERE LA FRASE HELLO WORD.
+#QUESTO SIGNIFICA CHE IL NOSTRO BROKER MQTT MOSQUITTO STA FUNZIONANDO
+
+
+#INSTALLIAMO NODERED
+bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
+	
+#ABILITIAMO IL SERVIZIO NODERED COSICCHE PARTA IN BACKGROUND AD OGNI AVVIO DELLA RASPPI
+sudo systemctl enable nodered.service
+#Startiamo il servizio nodered. basta farlo una sola volta nella vita. Una volta avviato possiamo anche chiudere il terminale
+#il servizio ora sta girando in background
+node-red-start
+
+#Per Programmare In Nodered aprimo dal nostro browser web questa pagina
+#dove IP è IP della macchina dove gira il server nodered
+http://192.168.178.44:1880
+
+#UI
+#Per vedere l'interfaccia grafica creata nel nostro progetto andare al sequente link
+#questa è la pagina che possiamo visualizzare da qualsiasi dispositivo (PC, cellulare)
+#Con la quale controllare il nostro termostato wifi tramite il protocollo MQTT.
+#Se poi vogliamo esporre il nostro server in internet possiamo tranquillamente controllare
+#il nostro termostato da internet in qualsiasi parte del mondo.
+#In questo video ci limitiamo solo ad esporre il server all'interno della nostra rete domestica.
+#Fateci sapere nei commenti se volete un tutorial di come esporre il vostro server in internet 
+#con tutti i passaggi necessari per rendere il server sicuro da attacci informatici.
+http://192.168.178.44:1880/ui
+
+
+#installare i pacchetti nodered
+#In nodered andare in Menu->Manage palette
+#Cliccare nel tab Install
+#e cercare i seguenti pacchetti e cliccare su install:
+node-red-dashboard
+node-red-contrib-ui-led
